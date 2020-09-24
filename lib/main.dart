@@ -16,9 +16,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List _toDoList = [
-    "Dowglas", "Kayron"
-  ];
+  List _toDoList = ["Dowglas", "Kayron"];
 
   Future<File> _getFile() async {
     final pathDirectory = await getApplicationDocumentsDirectory();
@@ -79,8 +77,13 @@ class _HomeState extends State<Home> {
                 padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
                 itemCount: _toDoList.length,
                 itemBuilder: (context, index) {
-                  return ListTile(
-                    title: Text(_toDoList[index]),
+                  return CheckboxListTile(
+                    title: Text(_toDoList[index]["title"]),
+                    value: _toDoList[index]["ok"],
+                    secondary: CircleAvatar(
+                      child:
+                      Icon(_toDoList[index]["ok"] ? Icons.check : Icons.error),
+                    ),
                   );
                 }),
           ),
