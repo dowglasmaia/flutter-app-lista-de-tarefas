@@ -16,7 +16,9 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  List _toDoList = [];
+  List _toDoList = [
+    "Dowglas", "Kayron"
+  ];
 
   Future<File> _getFile() async {
     final pathDirectory = await getApplicationDocumentsDirectory();
@@ -56,22 +58,32 @@ class _HomeState extends State<Home> {
               children: <Widget>[
                 Expanded(
                   child: TextField(
-                        decoration: InputDecoration(
+                    decoration: InputDecoration(
                         labelText: "Nova Tarefa",
                         labelStyle: TextStyle(color: color)),
                   ),
-
                 ),
                 RaisedButton(
                   color: color,
                   child: Text("ADD"),
                   textColor: Colors.white,
                   onPressed: () {},
-
                 )
               ],
             ),
-          )
+          ),
+
+          //Lista
+          Expanded(
+            child: ListView.builder(
+                padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                itemCount: _toDoList.length,
+                itemBuilder: (context, index) {
+                  return ListTile(
+                    title: Text(_toDoList[index]),
+                  );
+                }),
+          ),
         ],
       ),
     );
