@@ -36,6 +36,25 @@ class _HomeState extends State<Home> {
     });
   }
 
+  Future<Null> _refresh() async {
+    /*obtem a responta apois 1 segundo*/
+    await Future.delayed(Duration(seconds: 1));
+
+    /*Atualizando a Lista com ordem de tarefas ja concluidas OK*/
+    setState(() {
+      _toDoList.sort((a, b) {
+        if (a['ok'] && !b['ok'])
+          return 1;
+        else if (!a['ok'] && b['ok'])
+          return -1;
+        else
+          return 0;
+      });
+      _saveData();
+    });
+    return null;
+  }
+
   /*Sobrecarga do metodo inital*/
   @override
   void initState() {
@@ -104,11 +123,12 @@ class _HomeState extends State<Home> {
 
           //Lista
           Expanded(
-            child: ListView.builder(
-                padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
-                itemCount: _toDoList.length,
-                itemBuilder: buildItem),
-          ),
+              child: RefreshIndicator(
+                  child: ListView.builder(
+                      padding: EdgeInsets.fromLTRB(0.0, 10.0, 0.0, 0.0),
+                      itemCount: _toDoList.length,
+                      itemBuilder: buildItem),
+                  onRefresh: _refresh)),
         ],
       ),
     );
@@ -155,7 +175,8 @@ class _HomeState extends State<Home> {
           _saveData();
 
           final snackbar = SnackBar(
-            content: Text("Tafera \"${_lastRemoved['title']}\" removida da Lista!"),
+            content:
+                Text("Tafera \"${_lastRemoved['title']}\" removida da Lista!"),
             action: SnackBarAction(
                 label: "Desfazer",
                 onPressed: () {
