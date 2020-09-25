@@ -22,12 +22,28 @@ class _HomeState extends State<Home> {
 
   void _addToDo() {
     setState(() {
+      if (_toDoController.text.isEmpty) {
+        return;
+      }
       Map<String, dynamic> newToDo = Map();
       newToDo["title"] = _toDoController.text;
       _toDoController.text = "";
       newToDo["ok"] = false;
 
       _toDoList.add(newToDo);
+      _saveData();
+    });
+  }
+
+  /*Sobrecarga do metodo inital*/
+  @override
+  void initState() {
+    super.initState();
+
+    _readData().then((data) {
+      setState(() {
+        _toDoList = json.decode(data);
+      });
     });
   }
 
@@ -102,6 +118,7 @@ class _HomeState extends State<Home> {
                       //Atualiza o estado da operação
                       setState(() {
                         _toDoList[index]["ok"] = c;
+                        _saveData();
                       });
                     },
                   );
