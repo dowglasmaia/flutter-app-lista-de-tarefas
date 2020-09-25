@@ -17,8 +17,9 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final _toDoController = TextEditingController();
-
   List _toDoList = [];
+  Map<String, dynamic> _lastRemoved;
+  int _lastRemovedPos;
 
   void _addToDo() {
     setState(() {
@@ -113,7 +114,7 @@ class _HomeState extends State<Home> {
     );
   }
 
-  Widget buildItem(context, index) {
+  Widget buildItem(BuildContext context, int index) {
     return Dismissible(
       key: Key(DateTime.now().millisecondsSinceEpoch.toString()),
       //gerando uma key com a data e hora atual.
@@ -144,6 +145,31 @@ class _HomeState extends State<Home> {
           });
         },
       ),
+      onDismissed: (direction) {
+        // 'setState' (atualiza a lista apos a ação realizada, neste caso o delete de um dos intens da lista)
+        setState(() {
+          _lastRemoved = Map.from(_toDoList[index]);
+          _lastRemovedPos = index;
+          _toDoList.removeAt(index);
+
+          _saveData();
+
+          final snackbar = SnackBar(
+            content: Text("Tafera \"${_lastRemoved['title']}\" removida da Lista!"),
+            action: SnackBarAction(
+                label: "Desfazer",
+                onPressed: () {
+                  setState(() {
+                    _toDoList.insert(_lastRemovedPos,
+                        _lastRemoved); // insere a tafera na lista novamente
+                    _saveData();
+                  });
+                }),
+            duration: Duration(seconds: 3),
+          );
+          Scaffold.of(context).showSnackBar(snackbar);
+        });
+      },
     );
   }
 }
